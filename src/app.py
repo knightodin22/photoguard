@@ -219,4 +219,4 @@ with gr.Blocks(title="AI-Proof Photo Protection") as demo:
     gr.Markdown("This tool uses **PhotoGuard** (Encoder Attack) to perturb the image's latent representation. This makes the image 'look' like a gray box or random noise to AI models like Stable Diffusion, while remaining visually unchanged to humans.")
 
 demo.queue()
-demo.launch(server_name="0.0.0.0", server_port=7860)
+demo.launch(server_name="127.0.0.1", server_port=7860)
