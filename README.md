@@ -1,3 +1,39 @@
+# PhotoGuard Web App
+
+## 🚀 How to Run the Web App
+
+This repository includes a user-friendly web application for protecting your images against AI manipulation.
+
+### Prerequisites
+- Python 3.10+
+- A machine with internet access (to download models)
+- Optional: NVIDIA GPU (for faster processing)
+
+### Installation
+1.  **Clone the repository** (if you haven't already)
+2.  **Install dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### Running the App
+Run the following command from the root of the repository:
+```bash
+python src/app.py
+```
+
+Open your browser and navigate to `http://localhost:7860`.
+
+### Features
+- **Upload Image**: Drag and drop your photo.
+- **Protection Method**:
+    - **Simple (Encoder Attack)**: Fast, effective against Image-to-Image manipulation. Runs well on CPU.
+    - **Advanced (Diffusion Attack)**: More robust against Inpainting, but slower.
+- **Protection Strength**: Adjust the intensity of the invisible noise.
+- **Visual Verification**: See the amplified noise pattern to ensure protection is applied.
+
+---
+
 # Raising the Cost of Malicious AI-Powered Image Editing
 
 This repository contains the code for our recent work on safe-guarding images against manipulation by ML-powerd photo-editing models such as [stable diffusion](https://stability.ai/blog/stable-diffusion-public-release).

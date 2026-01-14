@@ -4,8 +4,12 @@ import numpy as np
 import requests
 from io import BytesIO
 from PIL import Image, ImageOps
-from diffusers import StableDiffusionInpaintPipeline
-import src.utils_protection as utils
+from diffusers import StableDiffusionInpaintPipeline, DDIMScheduler
+
+try:
+    import src.utils_protection as utils
+except ImportError:
+    import utils_protection as utils
 
 # --- Configuration ---
 DEVICE = utils.get_device()
@@ -24,6 +28,8 @@ try:
         torch_dtype=DTYPE,
         safety_checker=None,
     )
+    # Use DDIMScheduler for support of 'eta' parameter in attack
+    pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     pipe = pipe.to(DEVICE)
 except Exception as e:
     print(f"Error loading model: {e}")
@@ -128,23 +134,17 @@ def protect_image(input_image, attack_type, strength_slider):
         # Target: None (untargeted disruption) or Zero tensor
         target_image_tensor = torch.zeros_like(masked_image_tensor)
 
+        # NOTE: X is in range [-1, 1]. Eps should be relative to this range.
+        # Strength 1-10 -> eps 0.065 - 0.2.
+        # Step size needs to be large enough to traverse.
+
         X_adv = utils.super_l2(pipe,
                      cur_mask=mask_tensor,
                      X=masked_image_tensor,
                      prompt="",
-                     step_size=eps/5.0,
+                     step_size=eps/5.0, # e.g., 0.1 / 5 = 0.02
                      iters=iters,
-                     eps=eps*255, # super_l2 might expect different scale? In notebook eps=16 (pixel space 0-255 maybe? or latent?)
-                     # Notebook uses X in [-1, 1]. eps=16 sounds like pixel space 0-255?
-                     # Let's check utils.preprocess -> [-1, 1].
-                     # Notebook: "eps=16". "X_adv.data = torch.clamp(X + d_x_norm, clamp_min, clamp_max)".
-                     # If X is [-1, 1], eps=16 is HUGE.
-                     # Ah, notebook might not normalize to [-1, 1]?
-                     # "masked_image = image * (mask < 0.5)". image is [-1, 1] from prepare_mask...
-                     # So eps=16 is indeed huge if range is 2.
-                     # Wait, notebook: "prepare_mask...: image = ... / 127.5 - 1.0". Yes [-1, 1].
-                     # Maybe eps is smaller? "eps=16".
-                     # Let's use a safe small eps for [-1, 1] range: 0.1
+                     eps=eps, # Use normalized eps (0.1, not 25.5)
                      clamp_min=-1,
                      clamp_max=1,
                      grad_reps=1, # Speed up

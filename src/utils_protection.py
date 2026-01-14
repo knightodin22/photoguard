@@ -2,7 +2,6 @@ import torch
 import numpy as np
 from PIL import Image, ImageOps
 from torchvision.transforms import ToPILImage, ToTensor
-from tqdm import tqdm
 
 totensor = ToTensor()
 topil = ToPILImage()
