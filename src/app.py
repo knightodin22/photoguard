@@ -198,7 +198,7 @@ with gr.Blocks(title="AI-Proof Photo Protection") as demo:
 
     with gr.Row():
         with gr.Column():
-            input_img = gr.Image(label="Upload Image", source="upload", type="numpy")
+            input_img = gr.Image(label="Upload Image", sources=["upload"], type="numpy")
             attack_type = gr.Dropdown(
                 label="Protection Method",
                 choices=["Simple (Encoder Attack)", "Advanced (Diffusion Attack)"],
