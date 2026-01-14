@@ -1,6 +1,10 @@
-diffusers==0.10.2
+gradio
+diffusers==0.36.0
 transformers
-scipy
 accelerate
+scipy
+torch
 torchvision
---extra-index-url https://download.pytorch.org/whl/cu113
+numpy
+requests
+pillow
